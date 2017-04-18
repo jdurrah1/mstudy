@@ -1,0 +1,109 @@
+.well{
+    white-space: nowrap; 
+    width: 100%; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    text-align: left;
+}
+
+ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+li {
+  background-color: black;
+  padding-top: 0px;
+  white-space: nowrap;
+  width: 100%;
+  text-align: left;
+  font-family: "Lucida Console";
+}
+
+/* Remove the navbar's default margin-bottom and rounded borders */ 
+.navbar {
+  margin-bottom: 0;
+  border-radius: 0;
+  font-size: 20px;
+}
+
+/* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+.row.content {
+  height: 450px
+}
+
+/* Set background color and 100% height */
+.sidenav {
+  padding-top: 20px;
+  height: 550px !important;
+  font-size: 20px;
+}
+
+/* Set black background color, white text and some padding */
+footer {
+  background-color: #555;
+  color: white;
+  padding: 15px;
+}
+
+/* On small screens, set height to 'auto' for sidenav and grid */
+@media screen and (max-width: 767px) {
+  .sidenav {
+    height: auto;
+    padding: 15px;
+    font-size: 20px;
+  }
+  .row.content {height: auto;} 
+}
+
+h2 {
+  border: 3px solid black;
+  border-radius: 5px;
+  padding: 13px;
+}
+
+.input-group {
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+}
+
+button {
+  background-color: black;
+}
+
+.btn-standard {
+  font-size: 25px !important;
+  margin-top: 15px !important;
+  margin-right: 5px !important;
+  border-radius: 15px !important;
+}
+
+p {
+  font-size: 25px;
+  font-family: "Lucida Console";
+}
+
+.inputfile {
+  display: inline-block !important;
+}
+
+h3 {
+  margin-top: 5px !important;
+  padding: 13px !important;
+  border-radius: 5px;
+  border: 3px solid gray;
+}
+
+.savedTextP {
+  width: 100%;
+}
+
+.delete {
+  margin-right: 5px;
+}
+
+textarea {
+  font-size: 30px;
+  font-family: "Lucida Console";
+}

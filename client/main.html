@@ -1,0 +1,277 @@
+<!--<button class="btn transcribe-button">push me</button>-->
+
+<body>
+
+  {{> mainContent }}
+
+</body>
+
+<template name="mainContent">
+
+    <head>
+      <title>M-Study-Meteor-Version</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+
+    <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="#">M-Study</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <!--<li class="active"><a href="#">Speech to Text</a></li>
+          <li><a href="http://www.zamzar.com/">File Conversions</a></li>
+          <li><a href="#">Saved Files</a></li>-->
+        </ul>
+        <ul class="nav navbar-nav ">
+          <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> {{> loginButtons}}</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+    
+  <div class="container-fluid text-center">    
+    <div class="row content">
+      <div class="col-sm-8 text-center"> 
+        {{>clipboard}}
+      </div>
+      <div class="col-sm-4 sidenav" id="sidenav" style="overflow-y: scroll;">
+        <h3><strong>SAVED TEXT</strong></h3>
+        {{#if currentUser}}
+          {{>savedTextList}}
+        {{else}}
+        <h4>Please sign-in to view saved Text</h4>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</template>
+
+
+
+<template name="clipboard">
+  <h2><strong>CLIPBOARD</strong></h2>
+    <div class="input-group">
+      <textarea class="form-control textarea" style="font-size: 30px; font-family: 'Lucida Console';"
+	rows="10" cols="100" id="clipBoard" name="text" align="middle"></textarea>
+      {{>updatedSpeechToTextControls}}
+    </div>
+  </template>
+
+
+  <template name="updatedSpeechToTextControls">
+
+        <!-- Standard Buttons -->
+        <p><button id="record" class="btn-standard btn-danger" onclick="toggleRecording(this);" name="image">Record</button>
+        <a  style="display:none" id="download_recording" ><button class="btn-standard" >Download </button> </a>
+
+        <button type="button" class="btn-standard js-textareasavebtn">Save</button>
+        <button type="button" class="btn-standard js-textareacutbtn">Cut</button>
+        <button type="button" class="btn-standard js-textareacopybtn">Copy</button>
+        <!--<button type="button" class="btn-standard js-textareapastebtn">Paste</button>-->
+        <button type="button" class="btn-standard js-textareaclearbtn">Clear</button>
+
+        <!-- Download Buttons -->
+        Download File:
+        <button type="button" class="btn-standard js-textareadownloadtxtbtn">.TXT</button>
+        <button type="button" class="btn-standard js-textareadownloaddocbtn">.DOC</button></p>
+
+        <!-- Upload Button -->
+	<p>Upload File:
+	<input type="file" name="file" id="uploadtxt" class="inputfile">
+	<button type="button" class="btn-standard js-textareauploadtxtbtn">Upload .TXT</button></p>
+
+        {{>flac}}
+
+	<!-- UI Options -->
+	<p><button type="button" class="btn-standard js-uishowbtn">Show Appearance Options</button></p>
+	<div id="appearance_options">
+	  <p>
+	    Page BG<input type="color" id="color_page_bg" value="#000000">
+	    Page Text<input type="color" id="color_page_text" value="#ffff00">
+	    Buttons BG<input type="color" id="color_btn_bg" value="#ff0000">
+	    Buttons Text<input type="color" id="color_btn_text" value="#ffffff">
+	  </p>
+	  <p>
+	    Clipboard BG<input type="color" id="color_clip_bg" value="#006600">
+	    Clipboard Text<input type="color" id="color_clip_text" value="#00ff00">
+	    Docs BG<input type="color" id="color_docs_bg" value="#0000ff">
+	    Docs Text<input type="color" id="color_docs_text" value="#00ffff">
+	    <button type="button" class="btn-standard js-uichangebtn">Apply Changes</button>
+	  </p>
+        </div>
+
+      <script src = "../static/js/record.js"></script>
+      <script src="../static/js/Recorderjs-master/dist/recorder.js"></script>
+  </template>
+
+  <template name="savedTextList">
+    <ul style="list-style: none;">
+      {{#each savedTextValues}}    
+          {{> savedTextValue}}
+      {{/each}}
+    </ul>
+  </template>
+
+  <template name="savedTextValue">
+    <li>
+      <div>
+        <button class="select_btn">&lt;&lt;</button>
+        <button class="delete_btn"><strong>&times;</strong></button>{{text}}
+      </div>
+    </li>
+  </template>
+
+
+<template name="flac">
+  <div id="body-content">
+
+    <input id="com-file-analyzer-fileinput" autofocus="" type="file" />
+    <progress style="display: inline-block; text-align: center; width: 100%;" value="0" max="100">Your browser does not support this tool. Upgrade to a modern browser, please.</progress>
+
+    <script type='text/javascript'>
+      speechName = "";
+      var $prog = $('progress'),
+        $console = $('#console'),
+        $input = $('input'),
+        // Create a new web worker
+        // note that for each file you're going to encode
+        // you'll need to create a new web worker even
+        // if the previous one already finished
+        // This is because the "runtime" is shut down by
+        // Emscripten after one file was encoded
+        worker = new Worker('../flac.js/worker/EmsWorkerProxy.js');
+
+      // $input is a file input
+      // when its value changed, the user most likely
+      // inserted a file
+      $input.change(function() {
+        // Get the file supplied by the user
+        // and create a FileReader to get its
+        // contents as ArrayBuffer
+        var f = this.files[0],
+          fr = new FileReader();
+
+        // Disable input to prevent the user
+        // from inserting another file
+        $input.attr('disabled', 'disabled');
+
+        // Add an event listener to the file reader
+        // so we know when it's done with the whole file
+        fr.addEventListener('loadend', function() {
+          var encodedName = f.name.replace(/\.[^\.]+$/, '.flac');
+
+          // Command line arguments
+          // These are strings such as
+          // options, input file and output file
+          var args = [
+            // Input file *name*
+            f.name
+          ];
+          // Input file data
+          // Object literal mapping
+          // file names to Uint8Array
+          var inData = {};
+          // Remember: We set f.name as input file name
+          inData[f.name] = new Uint8Array(fr.result);
+
+          // Meta-information about the files
+          // that are being created during encoding
+          // Currently MIME type only
+          var outData = {};
+          outData[encodedName] = {
+            // Its MIME type
+            'MIME': 'audio/flac'
+          };
+
+          // Finally post all the data to the
+          // worker together with the "encode"
+          // command.
+          worker.postMessage({
+            command: 'encode',
+            args: args,
+            outData: outData,
+            fileData: inData
+          });
+        });
+
+        // Read the file as ArrayBuffer
+        // The FileReader will fire the `loadend`
+        // event upon completion.
+        fr.readAsArrayBuffer(f);
+      });
+
+      // Listen for messages by the worker
+      worker.onmessage = function(e) {
+        // If the message is a progress message
+        if (e.data && e.data.reply === 'progress') {
+          vals = e.data.values;
+          if (vals[1]) {
+            // ... push the progress bar forward
+            $prog.val(vals[0] / vals[1] * 100);
+          }
+        // If the worker is ready
+        } else if (e.data && e.data.reply === 'done') {
+          $prog.val(100);
+          for (fileName in e.data.values) {
+            // ... offer all files the worker returned
+            // In this case it's only one because we didn't
+            // use a command line argument that would force
+            // flac.js to create another file
+              console.log(e.data.values[fileName].blob);
+              blobToBase64(e.data.values[fileName].blob); 
+
+          }
+        }
+      };
+
+     function blobToBase64(blob) {
+        var reader = new FileReader();
+        reader.onload = function() {
+          var dataUrl = reader.result;
+          var base64 = dataUrl.split(',')[1];
+          sendpost(base64);
+        };
+        reader.readAsDataURL(blob);
+      };
+
+      function sendpost(base64)
+      {
+
+        console.log("sending post");
+        var name = HTTP.call("POST", "https://speech.googleapis.com/v1beta1/speech:syncrecognize?key=AIzaSyAO2eO6JVR93eNL1WYpr040o7kFQ59XPbM",
+          {data: {
+            "config": {
+                "encoding":"FLAC",
+                "language_code": "en-US",
+                "sampleRate": 44100
+            },
+            "audio": {
+                "content":base64
+            }
+          }}, 
+          function(error, result){
+
+            var textAreaVal = JSON.parse(result.content).results[0].alternatives[0].transcript
+            $(".textarea").val($(".textarea").val() + " " + textAreaVal);
+
+            console.log(result);
+            newResults = result; 
+          }
+          );
+        return name; 
+      }
+    </script>
+  </div>
+</template>
+

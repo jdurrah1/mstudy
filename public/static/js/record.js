@@ -52,7 +52,6 @@ var name = HTTP.call("POST", "https://speech.googleapis.com/v1beta1/speech:syncr
     "config": {
         "encoding":"FLAC",
         "language_code": "en-US",
-        "sampleRate": 44100
     },
     "audio": {
         "content":base64
